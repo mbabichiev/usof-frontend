@@ -1,9 +1,11 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
+import UserService from "../API/UserService";
+import YellowButton from "../components/UI/Button/YellowButton/YellowButton";
+import LightInput from "../components/UI/Input/LightInput/LightInput";
 import getCookie from "../scripts/getCookie";
 
-const CreateForAdmin = (props) => {
+const CreateForAdmin = () => {
 
     const [login, setLogin] = useState('');
     const [firstname, setFirstName] = useState('')
@@ -12,123 +14,128 @@ const CreateForAdmin = (props) => {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [email, setEmail] = useState('')
     const [role, setRole] = useState('user')
-
     const [oldLogin, setOldLogin] = useState('');
     const [oldRole, setOldRole] = useState('')
     const [isCreated, setIsCreated] = useState(false);
 
+
     async function saveUser(e) {
-
-        if(login.length < 4 || !firstname || !lastname || password.length < 6 || confirmPassword.length < 6 || !email || !role) {
-            return;
-        }
-
-        if(password !== confirmPassword) {
-
-            e.preventDefault();
-
-            setPassword('')
-            setConfirmPassword('')
-
-            alert("Password is not the same as confirm password, please write again.");
+        if (login.length < 4 || !firstname || !lastname || password.length < 6 ||
+            confirmPassword.length < 6 || email.length < 6 || email.indexOf("@") === -1 || !role) {
             return;
         }
 
         e.preventDefault();
+        if (password !== confirmPassword) {
+            setPassword('')
+            setConfirmPassword('')
 
-        try {
-            const response = await axios.post("http://localhost:8080/api/users", {
-                login: login,
-                firstname: firstname,
-                lastname: lastname,
-                password: password,
-                email: email,
-                role: role
-            })
-
-            if(response.status === 201) {
-                setOldLogin(login);
-                setOldRole(role);
-                setIsCreated(true);
-            }
+            return alert("Password is not the same as confirm password, please write again.");
         }
-        catch (err) {
-            if(err.response.status === 400) {
-                alert(err.response.data);
-            }
+
+        const response = await UserService.createUser(login, firstname, lastname, password, email, role);
+
+        if (response.status === 201) {
+            setOldLogin(login);
+            setOldRole(role);
+            setIsCreated(true);
+        }
+        else if (response.status === 400) {
+            alert(response.data);
+        }
+        else {
+            alert("Oops, something went wrong...");
         }
     }
 
+
+    if (!getCookie("id") || getCookie("role") !== "admin") {
+        return <Navigate to={'/authors'} />
+    }
+
+
     return (
-        <div>
+        <div className="container col-xxl-8 px-4 py-5">
+            <div className="mx-auto col-lg-6 text-center">
 
-            { !getCookie("id") || getCookie("role") !== "admin"
-                ? <Navigate to={'/authors'} />
-                : <></>
-            }
+                {isCreated &&
+                    <p>{oldLogin} ({oldRole}) successfully created.</p>
+                }
 
-            <div className="container col-xl-10 col-xxl-8 px-4 py-5">
+                <form style={{ background: "rgba(105, 105, 107, 0.5)" }} className="p-4 p-md-4 border rounded-2">
 
-                <div className="row align-items-center g-lg-5">
+                    Login<br />
+                    <LightInput
+                        type="text"
+                        name="login"
+                        onChange={e => setLogin(e.target.value)}
+                        minLength="4"
+                        style={{ width: "100%" }}
+                    />
+                    <br />
 
-                    <div className="col-md-10 mx-auto col-lg-6 text-center">
+                    <div className="btn-group">
+                        <div>
+                            First name<br />
+                            <LightInput
+                                type="text"
+                                name="firstname"
+                                onChange={e => setFirstName(e.target.value)}
+                                minLength="1"
+                            />
+                            <br />
+                        </div>
 
-                        { isCreated 
-                            ? <p>{oldLogin} ({oldRole}) successfully created. </p>
-                            : <div></div>
-                        }
-
-                        <form style={{background:"rgba(105, 105, 107, 0.5)"}} className="p-4 p-md-4 border rounded-2">
-                            <div>
-                                <label for="login">Login</label><br/>
-                                <input className="form-control"
-                                style={{textAlign: "center"}} type="text" name="login" onChange={e => setLogin(e.target.value)} minLength="4" required/><br/>
-                            </div>
-
-                            <div>
-                                <div>
-                                    <label for="firstname">First name</label><br/>
-                                    <input className="form-control"
-                                    style={{textAlign: "center"}} type="text" name="firstname" onChange={e => setFirstName(e.target.value)} minlength="1" required/><br/>
-                                </div>
-
-                                <div>
-                                    <label for="lastname">Last name</label><br/>
-                                    <input className="form-control"
-                                    style={{textAlign: "center"}} type="text" name="lastname" onChange={e => setLastName(e.target.value)} minlength="1" required/><br/>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label for="password">Password</label><br/>
-                                <input className="form-control"
-                                style={{textAlign: "center"}} type="password" value={password} onChange={e => setPassword(e.target.value)} minlength="6" required/><br/>
-                            </div>
-
-                            <div>
-                                <label for="confirmpass">Confirm Password</label><br/>
-                                <input className="form-control"
-                                style={{textAlign: "center"}} type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} minlength="6" required/><br/>
-                            </div>
-
-                            <div>
-                                <label for="email">Email</label><br/>
-                                <input className="form-control"
-                                style={{textAlign: "center"}} type="email" name="email" onChange={e => setEmail(e.target.value)} required/><br/>
-                            </div>
-
-                            <div>
-                                <label for="role">Role</label><br/>
-                                <select className="form-control" style={{textAlign: "center"}} onChange={e => setRole(e.target.value)} name="role" required>
-                                    <option value="user">User</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
-                            <br/>
-                            <button onClick={saveUser} className="btn btn-warning">Register</button>
-                        </form>
+                        <div>
+                            Last name<br />
+                            <LightInput
+                                type="text"
+                                name="lastname"
+                                onChange={e => setLastName(e.target.value)}
+                                minLength="1"
+                            />
+                        </div>
                     </div>
-                </div>
+
+                    Password<br />
+                    <LightInput
+                        type="password"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        minlength="6"
+                        style={{ width: "100%" }}
+                    />
+                    <br />
+
+                    Confirm Password<br />
+                    <LightInput
+                        type="password"
+                        value={confirmPassword}
+                        onChange={e => setConfirmPassword(e.target.value)}
+                        minlength="6"
+                        style={{ width: "100%" }}
+                    />
+                    <br />
+
+                    Email<br />
+                    <LightInput
+                        type="email"
+                        name="email"
+                        onChange={e => setEmail(e.target.value)}
+                        minlength="6"
+                        style={{ width: "100%" }}
+                    />
+                    <br />
+
+                    Role<br />
+                    <select className="form-control" style={{ textAlign: "center" }} onChange={e => setRole(e.target.value)} name="role">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <br />
+
+                    <YellowButton onClick={saveUser}>Register</YellowButton>
+                </form>
             </div>
         </div>
     )

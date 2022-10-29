@@ -1,57 +1,59 @@
 import React, { useEffect, useRef, useState } from "react";
-import axios from 'axios';
-import PostItem from "../components/PostItem";
 import {Link} from "react-router-dom";
 import getCookie from "../scripts/getCookie";
-import sortPosts from "../scripts/sortPosts";
 import {usePagination} from "../scripts/usePagination";
 import Loader from "../components/UI/Loader/Loader";
-import NoPublicationYet from "../components/NoPublication";
+import PostService from "../API/PostService";
+import Select from "../components/UI/Select/Select";
+import PublicationsArr from "../components/PublicationsArr";
 
 const Publications = () => {
     
-    let limit = 5;
+    const limit = 5;
     const [isLoading, setIsLoading] = useState(true);
     const [isLastPost, setIsLastPost] = useState(false);
     const [posts, setPosts] = useState([]);
     const [page, setPage] = useState(1);
+    const [sortType, setSortType] = useState("new");
     const lastElement = useRef();
 
 
     async function getActivePosts() {
 
-        try {
-            setIsLoading(true);
-            const response = await axios.get(`http://localhost:8080/api/posts?limit=${limit}&page=${page}`);
-            setIsLoading(false);
+        setIsLoading(true);
+        const arr = await PostService.getPostWithLimit(limit, page, sortType);
+        setIsLoading(false);
 
-            let arr = response.data.posts
-            if(arr.length !== 0) {
-                setPosts([...posts, ...arr])
+        if(arr.length !== 0) {
+            if(page === 1) {
+                setPosts(arr)
             }
             else {
-                setIsLastPost(true);
+                setPosts([...posts, ...arr])
             }
         }
-        catch (err) {
-            console.log(err);
+        else {
+            setIsLastPost(true);
         }
-
-    }
-
-    function sort(sortingType) {
-        setPosts(sortPosts(posts, sortingType))
     }
 
 
-    usePagination(lastElement, isLastPost, isLoading, () => {
+    usePagination(lastElement, !isLastPost, isLoading, () => {
         setPage(page + 1)
     })
 
 
     useEffect(() => {
         getActivePosts();
-    }, [page])
+    }, [page, sortType])
+
+
+    function getPosts() {
+        if(isLoading && posts.length === 0) {
+            return <Loader/>
+        }
+        return <PublicationsArr posts={posts}/>
+    }
 
 
     return (
@@ -63,49 +65,24 @@ const Publications = () => {
                     </div>
                 </div>
             </section>
-
             
             <div className="container d-flex justify-content-between align-items-center py-3">
-
                 <div className="py-1 col-md-3 mb-0">
-                    { getCookie("id")
-                        ? <Link to={"/posts/create"} className="btn btn-warning">Create publication</Link>
-                        : <></>
+                    {getCookie("id") && 
+                        <Link to={"/posts/create"} className="btn btn-warning">Create publication</Link>
                     }  
                 </div>
-                { posts.length !== 0
-                    ?
-                        <div className="nav col-md-4 justify-content-end">
-                            <select className="btn btn-outline-light me-2" onChange={e => sort(e.target.value)} >
-                                <option value="popular">Most popular</option>
-                                <option value="oldest">Date added: oldest</option>
-                                <option value="newest" selected>Date added: newest</option>
-                            </select>
-                        </div>
-                    : <></>
+                {posts.length !== 0 &&
+                    <div className="nav col-md-4 justify-content-end">
+                        <Select onChange={e => {setPage(1);setIsLastPost(false);setSortType(e.target.value)}}/>
+                    </div>
                 }
             </div>
                 
-
             <div className="container">
-                
-                { posts.length !== 0 
-                    ? 
-                        posts.map(post => 
-                            <PostItem post={post} key={post.id} />    
-                        )
-                    :   !isLoading ? <NoPublicationYet/> : <></>
-                }
-
-                { isLoading
-                    ? <Loader/>
-                    : <></>
-                }
-
-                <div ref={lastElement} style={{height:"10px"}}>
-
-                </div>           
-            </div>
+                {getPosts()}
+                <div ref={lastElement} style={{height:"10px"}}></div>
+            </div>   
         </div>
     )
 

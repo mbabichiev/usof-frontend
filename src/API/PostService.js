@@ -31,7 +31,17 @@ export default class PostService {
         catch (err) {
             console.log(err);
         }
+    }
 
+
+    static async getPostWithLimit(limit, page, sort) {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/posts?limit=${limit}&page=${page}&sort=${sort}`);
+            return response.data.posts;
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
 
 
@@ -53,30 +63,70 @@ export default class PostService {
     }
 
 
-    static async getAllPostsByCategoryId(id) {
+    static async getPostPhotoById(id) {
         try {
+            const response = await fetch(`http://localhost:8080/api/posts/${id}/photo`)
 
-            const response = await axios.get(`http://localhost:8080/api/categories/${id}/posts`)
-            return response.data.posts;
+            const blob = await response.blob();
+
+            if(blob.size === 0) {
+                return '';
+            }
+
+            const downloadURL = window.URL.createObjectURL(blob)
+            
+            return downloadURL;
         }
         catch (err) {
-
             console.log(err);
             return null;
         }
     }
 
 
-    static async getAllPostsByUserId(id) {
+    static async uploadPostPhoto(id, file) {
+
+        const formData = new FormData();
+        formData.append("file", file);
 
         try {
-            const response = await axios.get(`http://localhost:8080/api/users/${id}/posts`)
+            await axios.patch(`http://localhost:8080/api/posts/${id}/photo`, formData)
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+
+    static async deletePostPhotoById(id) {
+        try {
+            await axios.delete(`http://localhost:8080/api/posts/${id}/photo`)
+        }
+        catch(err) {
+            console.log(err);
+        }
+    }
+
+
+    static async getAllPostsByCategoryIdWithLimit(limit, page, sort, category_id) {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/categories/${category_id}/posts/?limit=${limit}&page=${page}&sort=${sort}`)
             return response.data.posts;
         }
         catch (err) {
-
             console.log(err);
-            return null;
+        }
+    }
+
+
+    static async getPostsWithLimitByUserId(limit, page, sort, id) {
+
+        try {
+            const response = await axios.get(`http://localhost:8080/api/users/${id}/posts/?limit=${limit}&page=${page}&sort=${sort}`)
+            return response.data.posts;
+        }
+        catch (err) {
+            console.log(err);
         }
     }
 
@@ -91,10 +141,11 @@ export default class PostService {
     }
 
 
-    static async updatePostById(id, categories, status, content) {
+    static async updatePostById(id, title, categories, status, content) {
 
         try {
             await axios.patch(`http://localhost:8080/api/posts/${id}`, {
+                title: title,
                 categories: categories,
                 status: status,
                 content: content

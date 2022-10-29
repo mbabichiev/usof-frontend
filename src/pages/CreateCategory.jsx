@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import getCookie from "../scripts/getCookie";
 import { Navigate } from "react-router-dom";
 import CategoryService from "../API/CategoryService";
+import DarkInput from "../components/UI/Input/DarkInput/DarkInput";
+import Textarea from "../components/UI/Textarea/Textarea";
+import YellowButton from "../components/UI/Button/YellowButton/YellowButton";
 
 
 const CreateCategory = () => {
@@ -12,76 +15,53 @@ const CreateCategory = () => {
 
 
     async function create(e) {
-
-        if(title.length < 4 || content.length < 10) {
+        if (title.length < 4 || content.length < 10) {
             return;
         }
 
         e.preventDefault();
 
         let response = await CategoryService.createCategory(title.toLocaleLowerCase(), content);
-
-        if(response.length > 0) {
-            alert(response);
-            return;
+        if (response.length > 0) {
+            return alert(response);
         }
 
         setIsCreated(true);
     }
 
 
+    if (!getCookie("id") || getCookie("role") !== "admin" || isCreated) {
+        return <Navigate to={"/categories"} />
+    }
+
+
     return (
-        <div>
-            { !getCookie("id") || getCookie("role") !== "admin" || isCreated
-                ? <Navigate to={"/categories"} />
-                : <></>
-            }
-            
-            <div>
+        <form className="flex-wrap row py-lg-5">
+            <div className="col-lg-5 col-md-8 mx-auto">
 
-                <form>
-                    <section className="flex-wrap">
-                        <div className="row py-lg-5">
-                            <div className="col-lg-5 col-md-8 mx-auto">
-                                <h3 className="fw-light">Title:
-                                    <input 
-                                        style={{width:"100%", background:"black", color: "white"}}
-                                        className="form-control"
-                                        onChange={e => setTitle(e.target.value)} 
-                                        type="text" 
-                                        name="title" 
-                                        minLength="4" required
-                                    />
-                                </h3>
+                <h3 className="fw-light">Title:</h3>
+                <DarkInput
+                    onChange={e => setTitle(e.target.value)}
+                    type="text"
+                    name="title"
+                    minLength="4"
+                />
+                <br />
+                
+                <h4 className="fw-light">Description:</h4>
+                <Textarea
+                    minLength="10"
+                    onChange={e => setContent(e.target.value)}
+                    rows={5}
+                />
+                <br /><br /><br />
 
-                                <div><br/>
-                                <h4 className="fw-light">Description:</h4>
-
-                                <textarea
-                                    required
-                                    minLength="10"
-                                    maxLength=""
-                                    onChange={e => setContent(e.target.value)}
-                                    style={{width:"100%", background:"black", color: "white"}}
-                                    className="border px-2 py-2">
-                                </textarea> <br/><br/><br/>
-
-                                <div className="text-center col-lg-6 col-md-8 mx-auto">
-                                    <button onClick={create} className="btn btn-warning">Create category</button>
-                                </div>
-                            </div>
-
-                            </div>
-                        </div>
-                    </section>   
-
-                </form>
-
+                <div className="text-center col-lg-6 col-md-8 mx-auto">
+                    <YellowButton onClick={create}>Create category</YellowButton>
+                </div>
             </div>
-
-        </div>
+        </form>
     )
-
 }
 
 export default CreateCategory;

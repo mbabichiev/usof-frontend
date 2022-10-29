@@ -1,6 +1,6 @@
 import {useEffect, useRef} from "react";
 
-export const usePagination = (ref, noLoad, isLoading, callback) => {
+export const usePagination = (ref, canLoad, isLoading, callback) => {
     const observer = useRef();
 
     useEffect(() => {
@@ -8,7 +8,7 @@ export const usePagination = (ref, noLoad, isLoading, callback) => {
         if(observer.current) observer.current.disconnect();
 
         var cb = function(entries, observer) {
-            if (entries[0].isIntersecting && !noLoad) {
+            if (entries[0].isIntersecting && canLoad) {
                 callback()
             }
         };

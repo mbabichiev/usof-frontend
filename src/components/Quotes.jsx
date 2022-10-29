@@ -28,11 +28,11 @@ const Quotes = () => {
                 <div style={{fontSize: "20px"}} className="border py-3 px-3">
                     <i>“{quote.content}”
 
-                    <div className="py-2">
-                        <div className="nav justify-content-end">
-                            {quote.author}
+                        <div className="py-2">
+                            <div className="nav justify-content-end">
+                                {quote.author}
+                            </div>
                         </div>
-                    </div>
                     </i>
                 </div>    
             )}

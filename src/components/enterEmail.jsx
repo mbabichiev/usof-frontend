@@ -1,5 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
+import OutlineButton from "./UI/Button/OutlineButton/OutlineButton";
+import LightInput from "./UI/Input/LightInput/LightInput";
 
 
 const EnterEmail = (props) => {
@@ -37,31 +39,34 @@ const EnterEmail = (props) => {
     }
 
     return (
-        <div>
-            <div className="container col-xl-10 col-xxl-8 px-4 py-5">
+        <div className="container col-xl-10 col-xxl-8 px-4 py-5">
+            <div className="row align-items-center g-lg-5 py-5">
+                <div className="col-md-10 mx-auto col-lg-5 text-center">
+                    <form style={{background:"rgba(105, 105, 107, 0.5)"}} className="p-4 p-md-5 border rounded-3">
+                        
+                        <p>
+                            Enter the email address you registered your account with.<br/>
+                            You will receive an email containing a password reset token.
+                        </p>
 
-                <div className="row align-items-center g-lg-5 py-5">
+                        <LightInput 
+                            style={{textAlign: "center"}}
+                            onChange={e => setEmail(e.target.value)}
+                            placeholder="example@gmail.com"
+                            type="email"
+                            name="email" 
+                            minLength="4"
+                        />
+                        <br/>
 
-                    <div className="col-md-10 mx-auto col-lg-5 text-center">
-                        <form style={{background:"rgba(105, 105, 107, 0.5)"}} className="p-4 p-md-5 border rounded-3">
-
-                            <p>
-                                Enter the email address you registered your account with.<br/>You will receive an email containing a password reset token.
-                            </p>
-
-                            <div>
-                                <input className="form-control"
-                                style={{textAlign: "center"}} onChange={e => setEmail(e.target.value)} placeholder="example@gmail.com" type="email" name="email" minLength="4" required/><br/>
-                            </div>
-
-                            <button onClick={sendTokenOnEmail} className="btn btn-outline-light">Send</button>
+                        <OutlineButton onClick={sendTokenOnEmail}>Send</OutlineButton>
                             
-                        </form>
-                        { isSending
-                            ? <p><br/>Sending the token on email {email}...</p>
-                            : <div></div>
-                        }
-                    </div>
+                    </form>
+
+                    { isSending
+                        ? <p><br/>Sending the token on email {email}...</p>
+                        : <></>
+                    }
                 </div>
             </div>
         </div>

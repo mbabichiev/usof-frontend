@@ -13,22 +13,17 @@ const Login = (props) => {
         setIsForget(value)
     }
 
+    if(getCookie("id")) {
+        return <Navigate to={"/"}/>
+    }
+
+    if(isForget) {
+        return <ForgetPasswordPage/>
+    }
+
     return (
-        <div>
-            { getCookie("id") 
-                ? <Navigate to={"/"}/>
-                :
-
-                <div>
-                    { isForget
-                    ? <ForgetPasswordPage/> 
-                    : <LoginForm updatePage={props.updatePage} setForget={setForget}/>
-                    }
-                </div>
-            }
-        </div>
+        <LoginForm updatePage={props.updatePage} setForget={setForget}/>
     )
-
 }
 
 export default Login;

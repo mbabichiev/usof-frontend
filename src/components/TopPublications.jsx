@@ -6,11 +6,9 @@ const TopPublications = ({posts}) => {
 
     return (
         <div>
-
             {posts.map(posts => 
                 <PostTopItem post={posts} key={posts.id} />    
             )}
-
         </div>
     )
 }

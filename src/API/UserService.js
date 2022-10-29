@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default class PostService {
+export default class UserService {
 
 
     static async register(login, firstname, lastname, password, email) {
@@ -21,6 +21,25 @@ export default class PostService {
     }
 
 
+    static async createUser(login, firstname, lastname, password, email, role) {
+
+        try {
+            const response = await axios.post("http://localhost:8080/api/users", {
+                login: login,
+                firstname: firstname,
+                lastname: lastname,
+                password: password,
+                email: email,
+                role: role
+            })
+            return response;
+        }
+        catch (err) {
+            return err.response;
+        }
+    }
+
+
 
     static async getUserById(id) {
         try {
@@ -32,6 +51,17 @@ export default class PostService {
         catch (err) {
             console.log(err);
             return null;
+        }
+    }
+
+
+    static async getUsersWithLimitAndPage(limit, page) {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/users?limit=${limit}&page=${page}`);
+            return response.data.users;
+        }
+        catch (err) {
+            console.log(err);
         }
     }
 
@@ -63,6 +93,33 @@ export default class PostService {
         catch (err) {
             console.log(err);
             return null;
+        }
+    }
+
+
+    static async getDefaultAvatar() {
+        try {
+            const response = await fetch(`http://localhost:8080/api/users/default`)
+            
+            const blob = await response.blob();
+            const downloadURL = window.URL.createObjectURL(blob)
+            
+            return downloadURL;
+        }
+        catch (err) {
+            console.log(err);
+            return null;
+        }
+    }
+
+
+    static async deleteUserAvatarById(id) {
+        
+        try {
+            axios.delete(`http://localhost:8080/api/users/${id}/avatar`)
+        }
+        catch (err) {
+            console.log(err);
         }
     }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import getCookie from "../scripts/getCookie";
 import CategoryService from "../API/CategoryService";
 import Category from "../components/Category";
@@ -12,16 +12,34 @@ const Publications = () => {
     const [categories, setCategories] = useState([]);
 
     async function getCategories() {
-
         const response = await CategoryService.getAllCategories();
         setIsLoading(false)
         setCategories(response.categories);
-
     }
+    
 
     useEffect(() => {
         getCategories();
     }, [])
+
+
+    function getLoader() {
+        if (isLoading) {
+            return <Loader />
+        }
+    }
+
+
+    function getButtonCreate() {
+        if (getCookie("role") === "admin" && getCookie("id")) {
+            return (
+                <div className="container px-3 py-3 text-center">
+                    <Link to={"/categories/create"} className="btn btn-warning">Create category</Link>
+                </div>
+            )
+        }
+    }
+
 
     return (
         <div>
@@ -33,33 +51,16 @@ const Publications = () => {
                 </div>
             </section>
 
-            { isLoading 
-                ? <Loader/>
-                : 
-            
-                <div>
-            
+            {getLoader()}
 
-                    <div className="container px-3 py-3 text-center">
-                        
-                        {categories.map(category => 
-                            <Category category={category} key={category.id} bigsize={true} />    
-                        )}
-                    </div>
-
-                    { getCookie("role") === "admin" && getCookie("id")
-                        ? 
-                        <div className="container px-3 py-3 text-center">
-                            <Link to={"/categories/create"} className="btn btn-warning">Create category</Link>
-                        </div>
-                        : <></>
-                    }
-
+            <div>
+                <div className="container px-3 py-3 text-center">
+                    {categories.map(category =>
+                        <Category category={category} key={category.id} bigsize={true} />
+                    )}
                 </div>
-
-            }
-
-
+                {getButtonCreate()}
+            </div>
         </div>
     )
 

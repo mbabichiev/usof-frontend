@@ -22,7 +22,7 @@ const Routers = (props) => {
     return (
         <div>
             <Routes>
-                <Route path='/' element={<Main/>}/>
+                <Route exact path='/' element={<Main/>}/>
                 <Route exach path="/posts/create" element={<CreatePublication/>}/>
                 <Route exact path='/posts' element={<Publications/>}/>
                 <Route exact path='/posts/:id' element={<PublicationId/>}/>

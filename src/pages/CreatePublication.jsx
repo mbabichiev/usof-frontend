@@ -4,17 +4,13 @@ import { Navigate } from "react-router-dom";
 import CategoryService from "../API/CategoryService";
 import CategoryInList from "../components/CategoryInList";
 import PostService from "../API/PostService";
+import Textarea from "../components/UI/Textarea/Textarea";
+import YellowButton from "../components/UI/Button/YellowButton/YellowButton";
+import DarkInput from "../components/UI/Input/DarkInput/DarkInput";
 
 const CreatePublication = () => {
 
-    let auth = false;
     let author_id = getCookie("id")
-
-    if(author_id) {
-        auth = true
-    }
-
-    const [isAuth, setIsAuth] = useState(auth);
     const [isCreated, setIsCreated] = useState(false);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -23,7 +19,6 @@ const CreatePublication = () => {
 
 
     async function getAllCategories() {
-
         const response = await CategoryService.getAllCategories();
         setCategories(response.categories)
     }
@@ -33,9 +28,11 @@ const CreatePublication = () => {
         setArrChoosenCategories([...arrChoosenCategories, id]);
     }
 
+
     function removeCategory(id) {
         setArrChoosenCategories(arrChoosenCategories.filter(c => c !== id));
     }
+
 
     useEffect(() => {
         getAllCategories();
@@ -43,77 +40,64 @@ const CreatePublication = () => {
 
 
     async function create(e) {
-
-        if(!title || content.length < 20) {
+        if (!title || content.length < 20) {
             return;
         }
 
         e.preventDefault();
 
-        if(arrChoosenCategories.length === 0) {
-            
-            alert("You mush select at least one category!")
-            return;
+        if (arrChoosenCategories.length === 0) {
+            return alert("You mush select at least one category!")
         }
-        
+
         setIsCreated(true);
         await PostService.createPost(author_id, title, arrChoosenCategories.join(','), content);
-
     }
 
 
+    if (!author_id) {
+        return <Navigate to={"/"} />
+    }
+
+    if (isCreated) {
+        return <Navigate to={`/authors/${author_id}`} />
+    }
+
     return (
-        <div>
-            {isAuth === false ? <Navigate to={"/"}/> : <div></div>}
-            {isCreated ? <Navigate to={`/authors/${author_id}`}/> : <div></div>}
-            <div>
+        <form>
+            <section className="flex-wrap row col-lg-5 col-md-8 mx-auto py-lg-5">
+                <h3 className="fw-light">Title:
+                    <DarkInput
+                        onChange={e => setTitle(e.target.value)}
+                        type="text"
+                        name="title"
+                        minLength="1"
+                    />
+                </h3>
 
-                <form>
-                    <section className="flex-wrap">
-                        <div className="row py-lg-5">
-                            <div className="col-lg-5 col-md-8 mx-auto">
-                                <h3 className="fw-light">Title:
-                                    <input 
-                                        className="form-control"
-                                        onChange={e => setTitle(e.target.value)} 
-                                        type="text" 
-                                        name="title" 
-                                        minLength="1" required
-                                    />
-                                </h3>
+                <h3 className="fw-light">
+                    Categories: {" "}
+                    {allCategories.map(category =>
+                        <CategoryInList addCategory={addCategory} removeCategory={removeCategory} category={category} key={category.id} />
+                    )}
+                </h3>
+            </section>
 
-                                <h3 className="fw-light">
-                                    Categories: {" "}
+            <div className="container py-3">
+                <Textarea
+                    minLength="20"
+                    rows={10}
+                    onChange={e => setContent(e.target.value)}
+                />
+                <br /><br /><br />
 
-                                    {allCategories.map(category => 
-                                        <CategoryInList addCategory={addCategory} removeCategory={removeCategory} category={category} key={category.id}/>    
-                                    )}
-                                </h3>
-
-                            </div>
-                        </div>
-                    </section>   
-
-
-                    <div className="container py-3">
-                        <div>
-                            <div>
-                                <textarea required minLength="20" maxLength="" onChange={e => setContent(e.target.value)} style={{width:"100%", background:"black", color: "white"}} className="border px-5 py-5">
-                                </textarea> <br/><br/><br/>
-
-                                <div className="text-center col-lg-6 col-md-8 mx-auto">
-                                    <button onClick={create} className="btn btn-warning">Create publication</button>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>  
-                </form>
-
+                <div className="text-center col-lg-6 col-md-8 mx-auto">
+                    <YellowButton onClick={create}>Create publication</YellowButton>
+                </div>
             </div>
-        </div>
+            
+        </form>
     )
-
 }
 
 export default CreatePublication;

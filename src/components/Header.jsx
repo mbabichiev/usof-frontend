@@ -30,7 +30,7 @@ const Header = () => {
                 <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
 
                     <Link to="/" style={{textDecoration:'none'}}>
-                        <a class="border rounded-2 d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                        <a class="fw-light border rounded-2 d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
                             <div style={iconStyle} color="white">L2L</div>
                         </a>
                     </Link>
