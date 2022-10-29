@@ -14,14 +14,11 @@ const Content = (props) => {
 
     return (
         <div>
-
-            { content && content.length !== 0
-                ? content.map(part => 
-                    <text>{part}<br/></text>
+            { (content && content.length !== 0) && 
+                content.map(part => 
+                    <p>{part}</p>
                 )
-                : <></>
             }
-            
         </div>   
     )
 }

@@ -21,6 +21,19 @@ export default class UserService {
     }
 
 
+    static async login(login, password) {
+        try {
+            const response = await axios.post("http://localhost:8080/api/auth/login", {
+                login: login,
+                password: password
+            })
+            return response;
+        }
+        catch (err) {
+            return err.response;
+        }
+    }
+
     static async createUser(login, firstname, lastname, password, email, role) {
 
         try {

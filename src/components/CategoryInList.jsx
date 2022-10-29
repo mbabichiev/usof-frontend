@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import {Link} from "react-router-dom";
+import React, { useState } from "react";
 
 const CategoryInList = (props) => {
 
@@ -11,7 +10,6 @@ const CategoryInList = (props) => {
     }
 
     function tapToCategory() {
-
         if(byPost) {
             setByPost(false);
             props.removeCategory(props.category.id);
@@ -20,7 +18,6 @@ const CategoryInList = (props) => {
             setByPost(true);
             props.addCategory(props.category.id);
         }
-
     }
 
     return (

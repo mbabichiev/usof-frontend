@@ -10,12 +10,10 @@ const PostReactions = ({post_id, numberOfLikes, numberOfDislikes}) => {
     const [isDislike, setIsDislike] = useState(false);
     const [sumLikes, setSumLikes] = useState(0);
     const [sumDislikes, setSumDislikes] = useState(0);
-
     let my_id = getCookie("id");
 
 
     async function checkIfLikeExist() {
-
         setSumLikes(numberOfLikes);
         setSumDislikes(numberOfDislikes);
 

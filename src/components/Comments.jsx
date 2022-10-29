@@ -1,7 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-
-import PostService from "../API/PostService";
+import React from "react";
 import CommentItem from "./CommentItem";
 
 const Comments = (props) => {

@@ -1,6 +1,6 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import UserService from '../API/UserService';
 import saveRole from '../scripts/saveRole';
 import OutlineButton from './UI/Button/OutlineButton/OutlineButton';
 import YellowButton from './UI/Button/YellowButton/YellowButton';
@@ -14,35 +14,30 @@ const LoginForm = (props) => {
 
 
     async function submitLogin(e) {
-
-        if(!login || !password) {
+        if (login.length < 4 || password.length < 6) {
             return;
         }
-
         e.preventDefault();
-        
-        try {
-            const response = await axios.post("http://localhost:8080/api/auth/login", {
-                login: login,
-                password: password
-            })
 
-            if(response.status === 200) {
+        const response = await UserService.login(login, password);
 
-                const responseUser = await axios.get(`http://localhost:8080/api/users/${response.data.split('=')[1]}`)
-                saveRole(responseUser.data.user.role);
-                document.cookie = response.data + ";path=/;";
-                setIsAuth(true);
-                props.updatePage();
-            }
+        if (response.status === 200) {
+
+            const user = await UserService.getUserById(response.data.split('=')[1]);
+            saveRole(user.role);
+            document.cookie = response.data + ";path=/;";
+            setIsAuth(true);
+            props.updatePage();
         }
-        catch (err) {
-            if(err.response.status === 400) {
-                if(err.response.data === "Wrong password") {
-                    setPassword('');
-                }
-                alert(err.response.data);
+        else if (response.status === 400) {
+
+            if (response.data === "Wrong password") {
+                setPassword('');
             }
+            alert(response.data);
+        }
+        else {
+            alert("Oops, something went wrong...");
         }
     }
 

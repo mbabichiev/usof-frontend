@@ -3,14 +3,6 @@ import {Link} from "react-router-dom";
 
 const Category = (props) => {
 
-    let bigStyle = {}
-
-    if(props.bigsize === true) {
-        bigStyle = {
-
-        }
-    }
-
     return (
         <> 
         { props.bigsize 
