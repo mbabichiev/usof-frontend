@@ -4,7 +4,7 @@
 git clone git@gitlab.ucode.world:connect-khpi/connect-fullstack-usof-frontend/mbabichiev.git
 ```
 
-Read the `README.md` in `/API` and install the server API.
+Install and run the server API from repository `usof-backend`.
 
 Return to the project directory and install node modules by command:
 
