@@ -1,13 +1,20 @@
 import React from 'react';
 
 
-const Select = (props) => {
+const Select = ({isComment, ...props}) => {
 
     return (
         <select {...props} className="btn btn-outline-light me-2">
-            <option value="popular">Most popular</option>
+            {isComment 
+                ? <option value="popular" selected>Most popular</option>
+                : <option value="popular">Most popular</option>
+            }  
             <option value="old">Date added: oldest</option>
-            <option value="new" selected>Date added: newest</option>
+            {isComment 
+                ? <option value="new">Date added: newest</option>
+                : <option value="new" selected>Date added: newest</option>
+            } 
+            
         </select>
     )
 

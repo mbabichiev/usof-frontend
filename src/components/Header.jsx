@@ -52,7 +52,7 @@ const Header = () => {
                 {foundAuthors.length === 0
                     ? <>Authors not found</>
                     : <>{foundAuthors.map(author => 
-                            <><Link class="px-2 text-white" to={"/authors/" + author.id}>{author.full_name}</Link><br/></>
+                            <div><a class="px-2 text-white" href={"/authors/" + author.id}>{author.full_name}</a></div>
                         )}</>
                 }
             </div>
@@ -66,7 +66,7 @@ const Header = () => {
                 {foundPosts.length === 0
                     ? <>Publications not found</>
                     : <>{foundPosts.map(post => 
-                            <><Link class="px-2 text-white" to={"/posts/" + post.id}>{post.title}</Link><br/></>
+                            <div><a class="px-2 text-white" href={"/posts/" + post.id}>{post.title}</a></div>
                         )}</>
                 }
             </div>
@@ -122,7 +122,7 @@ const Header = () => {
                         </div>
 
                         <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                            <input type="search" onChange={e => setSearchText(e.target.value)} class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search"></input>
+                            <input type="search" onChange={e => setSearchText(e.target.value)} class="form-control form-control-dark text-bg-dark" placeholder="Search..."></input>
                         </form>
 
                         {id

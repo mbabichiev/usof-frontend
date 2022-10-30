@@ -130,10 +130,10 @@ export default class PostService {
     }
 
 
-    static async getCommentsUnderPostById(id) {
+    static async getCommentsUnderPostById(limit, page, sort, id) {
 
         try {
-            const response = await axios.get(`http://localhost:8080/api/posts/${id}/comments`);
+            const response = await axios.get(`http://localhost:8080/api/posts/${id}/comments/?limit=${limit}&page=${page}&sort=${sort}`);
             return response.data.comments;
         }
         catch (err) {
