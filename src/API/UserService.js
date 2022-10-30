@@ -4,7 +4,6 @@ export default class UserService {
 
 
     static async register(login, firstname, lastname, password, email) {
-
         try {
             const response = await axios.post("http://localhost:8080/api/auth/register", {
                 login: login,
@@ -35,7 +34,6 @@ export default class UserService {
     }
 
     static async createUser(login, firstname, lastname, password, email, role) {
-
         try {
             const response = await axios.post("http://localhost:8080/api/users", {
                 login: login,
@@ -53,17 +51,13 @@ export default class UserService {
     }
 
 
-
     static async getUserById(id) {
         try {
-
             const response = await axios.get(`http://localhost:8080/api/users/${id}`)
             return response.data.user;
-
         }
         catch (err) {
             console.log(err);
-            return null;
         }
     }
 
@@ -79,25 +73,9 @@ export default class UserService {
     }
 
 
-    static async getAllUsers() {
-
-        try {
-
-            const response = await axios.get(`http://localhost:8080/api/users`)
-            return response.data.users;
-        }
-        catch (err) {
-            console.log(err);
-            return null;
-        }
-    }
-
-
     static async getUserAvatarById(id) {
-        
         try {
             const response = await fetch(`http://localhost:8080/api/users/${id}/avatar`)
-            
             const blob = await response.blob();
             const downloadURL = window.URL.createObjectURL(blob)
             
@@ -105,7 +83,6 @@ export default class UserService {
         }
         catch (err) {
             console.log(err);
-            return null;
         }
     }
 
@@ -113,7 +90,6 @@ export default class UserService {
     static async getDefaultAvatar() {
         try {
             const response = await fetch(`http://localhost:8080/api/users/default`)
-            
             const blob = await response.blob();
             const downloadURL = window.URL.createObjectURL(blob)
             
@@ -127,7 +103,6 @@ export default class UserService {
 
 
     static async deleteUserAvatarById(id) {
-        
         try {
             axios.delete(`http://localhost:8080/api/users/${id}/avatar`)
         }
@@ -148,7 +123,6 @@ export default class UserService {
 
 
     static async uploadAvatar(id, file) {
-
         const formData = new FormData();
         formData.append("file", file);
 
@@ -162,7 +136,6 @@ export default class UserService {
 
 
     static async updateUserById(id, firstname, lastname, login, email) {
-
         try {
             await axios.patch(`http://localhost:8080/api/users/${id}`, {
                 firstname: firstname,
@@ -175,7 +148,5 @@ export default class UserService {
             console.log(err);
         }
     }
-    
-
 }
 

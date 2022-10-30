@@ -66,7 +66,7 @@ const PublicationId = () => {
     useEffect(() => {
         getPost(params.id);
         getAllComments();
-    }, [])
+    }, [params.id])
 
 
     if(isDelete) {

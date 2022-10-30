@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter} from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 
 import Header from "./components/Header";
 import Routers from "./components/Routers";
@@ -11,31 +11,31 @@ const getCookie = require("./scripts/getCookie.js");
 function App() {
 
   const [isUpdate, setIsUpdate] = useState(false);
-  const [isAuth, setIsAuth] = useState(false)
+  const [isAuth, setIsAuth] = useState(false);
 
 
   function updatePage() {
-    if(isUpdate) {
+    if (isUpdate) {
       setIsUpdate(false)
     }
     else {
       setIsUpdate(true);
     }
   }
-  
+
 
   async function updateCookies() {
 
     let id = getCookie("id");
 
-    if(id) {
+    if (id) {
       const response = await UserService.getUserById(id)
 
-      if(response) {
-        if(String(response.role) === "admin") {
+      if (response) {
+        if (String(response.role) === "admin") {
           saveRole("admin")
         }
-        else if(String(response.role) === "user") {
+        else if (String(response.role) === "user") {
           saveRole("user")
         }
       }
@@ -54,10 +54,10 @@ function App() {
 
 
   return (
-    
+
     <BrowserRouter>
       <Header/>
-      <Routers updatePage={updatePage}/>
+      <Routers updatePage={updatePage} />
     </BrowserRouter>
 
   );
